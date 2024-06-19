@@ -1,133 +1,71 @@
 ﻿#include <iostream>
 #include <Windows.h>
-#include <climits>
-
 
 using namespace std;
 
-// Структура узла списка
-struct Node {
+struct Node 
+{
     int data;
     Node* next;
-    Node(int d) : data(d), next(nullptr) {}
 };
 
-// Класс очереди на основе однонаправленного списка
-class Queue {
-private:
-    Node* front;  // Указатель на начало очереди
-    Node* rear;   // Указатель на конец очереди
+bool areEqual(Node* head1, Node* head2) 
+{
+    Node* current1 = head1;
+    Node* current2 = head2;
 
-public:
-    Queue() : front(nullptr), rear(nullptr) {}
-
-    // Метод добавления элемента в очередь
-    void enqueue(int data) {
-        Node* newNode = new Node(data);
-        if (rear == nullptr) {
-            front = rear = newNode;
+    while (current1 != nullptr && current2 != nullptr) 
+    {
+        if (current1->data != current2->data) 
+        {
+            return false;
         }
-        else {
-            rear->next = newNode;
-            rear = newNode;
-        }
+        current1 = current1->next;
+        current2 = current2->next;
     }
 
-    // Метод удаления элемента из очереди
-    void dequeue() {
-        if (front == nullptr) {
-            cerr << "Очередь пустая" << endl;
-            return;
-        }
-        Node* temp = front;
-        front = front->next;
-        if (front == nullptr) {
-            rear = nullptr;
-        }
-        delete temp;
+    // Check if both lists are of the same length
+    if (current1 == nullptr && current2 == nullptr) 
+    {
+        return true;
     }
 
-    // Метод получения первого элемента очереди
-    int peek() const {
-        if (front != nullptr) {
-            return front->data;
-        }
-        throw runtime_error("Очередь пустая");
-    }
+    return false;
+}
 
-    // Метод проверки, пуста ли очередь
-    bool isEmpty() const {
-        return front == nullptr;
-    }
-
-    // Метод очистки очереди
-    void clear() {
-        while (!isEmpty()) {
-            dequeue();
-        }
-    }
-
-    // Деструктор для очистки памяти
-    ~Queue() {
-        clear();
-    }
-
-    // Метод поиска минимального элемента в очереди
-    int findMin() const {
-        if (isEmpty()) {
-            throw runtime_error("Очередь пустая");
-        }
-        int min = INT_MAX;
-        Node* current = front;
-        while (current != nullptr) {
-            if (current->data < min) {
-                min = current->data;
-            }
-            current = current->next;
-        }
-        return min;
-    }
-
-    // Метод печати элементов очереди
-    void print() const {
-        Node* current = front;
-        while (current != nullptr) {
-            cout << current->data << " ";
-            current = current->next;
-        }
-        cout << endl;
-    }
-};
-
-// Тестирование
-int main() {
+int main() 
+{
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
+    // Пример использования функции areEqual
 
+    // Создаем первый список: 1 -> 2 -> 3
+    Node* head1 = new Node{ 1, nullptr };
+    head1->next = new Node{ 2, nullptr };
+    head1->next->next = new Node{ 3, nullptr };
 
-    cout << "Практика: 10 \n\rВариант 8\r\n\r\n";
+    // Создаем второй список: 1 -> 2 -> 3
+    Node* head2 = new Node{ 1, nullptr };
+    head2->next = new Node{ 2, nullptr };
+    head2->next->next = new Node{ 3, nullptr };
 
-    Queue q;
-
-    // Добавление элементов в очередь
-    q.enqueue(5);
-    q.enqueue(3);
-    q.enqueue(8);
-    q.enqueue(1);
-    q.enqueue(4);
-
-    // Печать элементов очереди
-    cout << "Очередь: ";
-    q.print();
-
-    // Поиск минимального элемента
-    try {
-        int minElement = q.findMin();
-        cout << "Минимальный элемент очереди: " << minElement << endl;
+    if (areEqual(head1, head2)) 
+    {
+        cout << "Списки равны." << endl;
     }
-    catch (const exception& e) {
-        cerr << e.what() << endl;
+    else 
+    {
+        cout << "Списки не равны." << endl;
     }
+
+    // Освобождаем память
+    delete head1->next->next;
+    delete head1->next;
+    delete head1;
+
+    delete head2->next->next;
+    delete head2->next;
+    delete head2;
 
     return 0;
 }
